@@ -10,25 +10,33 @@ public class GenerateGrid : MonoBehaviour {
      * 3. Spawn and Execute
      */
 
-    [SerializeField] private int _gridX;
-    [SerializeField] private int _gridY;        // in this case, this is represent 'z'
-    [SerializeField] private float _gridOffset; // space between
+    [SerializeField] protected int _gridX;
+    [SerializeField] protected int _gridY;        // in this case, this is represent 'z'
+    [SerializeField] protected float _gridOffset; // space between
+
+    public GameObject _block;
 
     private const float CAMERA_BASE_HEIGHT = 20;
+
 
     void Start() {
         Generate();
     }
 
-    void Generate() {
+    protected virtual void Generate() {
         for (int x = 0; x < _gridX; x++) {
             for (int z = 0; z < _gridY; z++) {
                 Vector3 spawnPosition = new Vector3(x * _gridOffset, 0, z * _gridOffset);
-                GameObject cube = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), spawnPosition,
-                    Quaternion.identity);
-                cube.transform.SetParent(this.transform);
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                var boxCollider = cube.GetComponent<BoxCollider>();
+                if (boxCollider != null)
+                    Destroy(boxCollider);
+                cube.transform.position = spawnPosition;
+                cube.transform.SetParent(transform);
             }
         }
+
+        CameraLocation();
     }
 
     void Regenerate() {
@@ -53,7 +61,9 @@ public class GenerateGrid : MonoBehaviour {
         }
         else
             Generate();
+    }
 
+    public void CameraLocation() {
         // Camera re-position
         if (Camera.main != null) {
             var camTransform = Camera.main.transform;
@@ -72,7 +82,7 @@ public class GenerateGrid : MonoBehaviour {
     private string _yInputString = "Enter Y";
 
 
-    private void OnGUI() {
+    protected virtual void OnGUI() {
         GUI.Box(new Rect(10, 10, 100, 125), "Map Settings");
         if (GUI.Button(new Rect(20, 40, 80, 25), "Regenerate"))
             Regenerate();
