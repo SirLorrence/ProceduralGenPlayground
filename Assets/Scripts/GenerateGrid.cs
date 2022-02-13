@@ -10,11 +10,12 @@ public class GenerateGrid : MonoBehaviour {
      * 3. Spawn and Execute
      */
 
+    [Header("Settings")]
     [SerializeField] protected int _gridX;
     [SerializeField] protected int _gridY;        // in this case, this is represent 'z'
     [SerializeField] protected float _gridOffset; // space between
 
-    public GameObject _block;
+    private GameObject _block;
 
     private const float CAMERA_BASE_HEIGHT = 20;
 
